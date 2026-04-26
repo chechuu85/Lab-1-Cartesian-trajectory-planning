@@ -140,8 +140,50 @@ std::pair<tf2::Vector3, tf2::Quaternion> PoseInterpolation(
     const Eigen::Matrix4d &end_pose,
     double lambda)
 {
-    tf2::Vector3 p_interp;    // Placeholder for the interpolated position
-    tf2::Quaternion q_interp; // Placeholder for the interpolated quaternion
+
+    // Cálculo de la pose:
+
+    // Extraer posiciones
+    Eigen::Vector3d p0 = start_pose.block<3,1>(0,3);
+    Eigen::Vector3d p1 = end_pose.block<3,1>(0,3);
+
+    // Pose en cada instante
+    Eigen::Vector3d p = p0 + lambda * (p1 - p0);
+
+    // Cambiar tipo de dato
+    tf2::Vector3 p_interp(p.x(), p.y(), p.z());
+
+    // Cálculo de la  orientación:
+
+    // Extraer matrices de rotación
+    Eigen::Matrix3d R0 = start_pose.block<3,3>(0,0);
+    Eigen::Matrix3d R1 = end_pose.block<3,3>(0,0);
+
+    // Pasar a cuaternios
+    tf2::Quaternion qA = rot2Quat(R0);
+    tf2::Quaternion qB = rot2Quat(R1);
+
+    // Inversa de qA
+    tf2::Quaternion qA_inv = InverseQuaternion(qA);
+
+    // Sacar wc, vc
+    tf2::Quaternion qC = MuliplyQuaternions(qA_inv, qB);
+
+    double wc = qC.w();
+    tf2::Vector3 vc(qC.x(), qC.y(), qC.z());
+
+    // Sacar theta y n
+    double thetac = 2 * std::acos( wc );
+    tf2::Vector3 nc = vc / ( std::sin( thetac/2 ) );
+
+    double theta_lambda = thetac * lambda;
+
+    double w_rot = std::cos( theta_lambda / 2 );
+    tf2::Vector3 v_rot = nc * std::sin( theta_lambda / 2 );
+
+    tf2::Quaternion q_rot(v_rot.x(), v_rot.y(), v_rot.z(), w_rot);
+
+    tf2::Quaternion q_interp  = MuliplyQuaternions(qA, q_rot);
 
     return {p_interp, q_interp};
 }
