@@ -266,8 +266,8 @@ std::pair<tf2::Vector3, tf2::Quaternion> ComputeNextCartesianPose(
             Eigen::Vector3d deltaP01 = P1 - P0;
             Eigen::Vector3d deltaP12 = P2 - P1;
 
-            Eigen::Vector3d p = P1 + ( std::pow((t - tau), 2) / (4*tau*T) ) * deltaP01 + ( std::pow((t + tau), 2) / (4*tau*T) ) * deltaP12;
-            tf2::Vector3 p_interp(p.x(), p.y(), p.z());
+            Eigen::Vector3d p = P1 - ( std::pow((tau - t), 2) / (4*tau*T) ) * deltaP01 + ( std::pow((tau + t), 2) / (4*tau*T) ) * deltaP12;
+            p_interp = tf2::Vector3(p.x(), p.y(), p.z());
         }
         
     }
@@ -365,8 +365,8 @@ int main(int argc, char **argv)
            q3.x(), q3.y(), q3.z(), q3.w());
 
     // Exercise 2 : Cartesian trajectory generation
-    int tau = 1;
-    int T = 10;
+    int tau = 1; //original 1
+    int T = 100;  //original 10
     bool exercise_2 = true; // Set to true to execute Exercise 2
 
     if (exercise_2)
