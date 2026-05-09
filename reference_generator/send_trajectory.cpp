@@ -328,15 +328,20 @@ int main(int argc, char **argv)
             "/config/poses.yaml";
     }
 
-    Eigen::Matrix4d pose0;
-    Eigen::Matrix4d pose1;
-    Eigen::Matrix4d pose2;
+    Eigen::Matrix4d P_ini;
+    Eigen::Matrix4d P_pickappro;
+    Eigen::Matrix4d P_pick;
+    Eigen::Matrix4d P_placeappro;
+    Eigen::Matrix4d P_place;
+
     try
     {
         const YAML::Node poses_root = YAML::LoadFile(poses_yaml_path);
-        pose0 = ParsePoseMatrix(poses_root, "pose0");
-        pose1 = ParsePoseMatrix(poses_root, "pose1");
-        pose2 = ParsePoseMatrix(poses_root, "pose2");
+        P_ini = ParsePoseMatrix(poses_root, "P_ini");
+        P_pickappro = ParsePoseMatrix(poses_root, "P_pickappro");
+        P_pick = ParsePoseMatrix(poses_root, "P_pick");
+        P_placeappro = ParsePoseMatrix(poses_root, "P_placeappro");
+        P_place = ParsePoseMatrix(poses_root, "P_place");
     }
     catch (const std::exception &e)
     {
@@ -345,7 +350,7 @@ int main(int argc, char **argv)
     }
 
     // Exercise 1 : Cartesian interpolation
-    const auto [p0, q0] = PoseInterpolation(pose0, pose1, 0.0);
+    /*const auto [p0, q0] = PoseInterpolation(pose0, pose1, 0.0);
     const auto [p1, q1] = PoseInterpolation(pose0, pose1, 1.0);
     const auto [p2, q2] = PoseInterpolation(pose1, pose2, 0.0);
     const auto [p3, q3] = PoseInterpolation(pose1, pose2, 1.0);
@@ -362,7 +367,7 @@ int main(int argc, char **argv)
            q2.x(), q2.y(), q2.z(), q2.w());
     printf("p3: %f, %f, %f\n", p3.x(), p3.y(), p3.z());
     printf("q3: %f, %f, %f, %f\n",
-           q3.x(), q3.y(), q3.z(), q3.w());
+           q3.x(), q3.y(), q3.z(), q3.w());*/
 
     // Exercise 2 : Cartesian trajectory generation
     int tau = 1; //original 1
@@ -422,49 +427,71 @@ int main(int argc, char **argv)
         csv_file << "t,X,Y,Z,roll,pitch,yaw\n";
         csv_file << std::fixed << std::setprecision(9);
 
+        for(int j = 0; j < 4; j++){
+
         // Loop over the time range from -T to T with a step of sample_time and compute the interpolated Cartesian pose at each time step
-        for (double t = -T; t <= T + 1e-9; t += sample_time)
-        {
-            const auto [p_interp, q_interp] = ComputeNextCartesianPose(pose0, pose1, pose2, tau, T, t);
-
-            double roll = 0.0;
-            double pitch = 0.0;
-            double yaw = 0.0;
-            tf2::Matrix3x3(q_interp).getRPY(roll, pitch, yaw);
-
-            csv_file << t << ","
-                     << p_interp.x() << "," << p_interp.y() << "," << p_interp.z() << ","
-                     << roll << "," << pitch << "," << yaw << "\n";
-
-            const KDL::Frame desired_ee_pose(
-                KDL::Rotation::Quaternion(q_interp.x(), q_interp.y(), q_interp.z(), q_interp.w()),
-                KDL::Vector(p_interp.x(), p_interp.y(), p_interp.z()));
-
-            KDL::JntArray next_joint_positions(chain.getNrOfJoints());
-            const int ik_status = ik_pos_solver_->CartToJnt(joint_positions, desired_ee_pose, next_joint_positions);
-            if (ik_status < 0)
+            for (double t = -T; t <= T + 1e-9; t += sample_time)
             {
-                std::fprintf(
-                    stderr,
-                    "IK failed at t=%.3f with error code %d. Skipping point.\n",
-                    t, ik_status);
-                continue;
+
+                tf2::Vector3 p_interp;
+                tf2::Quaternion q_interp;
+
+                switch (j)
+                {
+                    case 0:
+                        std::tie(p_interp, q_interp) = ComputeNextCartesianPose(P_ini, P_pickappro, P_pick, tau, T, t);
+                        break;
+                    case 1:
+                        std::tie(p_interp, q_interp) = ComputeNextCartesianPose(P_pick, P_pickappro, P_ini, tau, T, t);
+                        break;
+                    case 2:
+                        std::tie(p_interp, q_interp) = ComputeNextCartesianPose(P_ini, P_placeappro, P_place, tau, T, t);
+                        break;
+                    case 3:
+                        std::tie(p_interp, q_interp) = ComputeNextCartesianPose(P_place, P_placeappro, P_ini, tau, T, t);
+                        break;
+                }
+
+                double roll = 0.0;
+                double pitch = 0.0;
+                double yaw = 0.0;
+                tf2::Matrix3x3(q_interp).getRPY(roll, pitch, yaw);
+
+                csv_file << t << ","
+                        << p_interp.x() << "," << p_interp.y() << "," << p_interp.z() << ","
+                        << roll << "," << pitch << "," << yaw << "\n";
+
+                const KDL::Frame desired_ee_pose(
+                    KDL::Rotation::Quaternion(q_interp.x(), q_interp.y(), q_interp.z(), q_interp.w()),
+                    KDL::Vector(p_interp.x(), p_interp.y(), p_interp.z()));
+
+                KDL::JntArray next_joint_positions(chain.getNrOfJoints());
+                const int ik_status = ik_pos_solver_->CartToJnt(joint_positions, desired_ee_pose, next_joint_positions);
+                if (ik_status < 0)
+                {
+                    std::fprintf(
+                        stderr,
+                        "IK failed at t=%.3f with error code %d. Skipping point.\n",
+                        t, ik_status);
+                    continue;
+                }
+
+                std::memcpy(
+                    trajectory_point_msg.positions.data(), next_joint_positions.data.data(),
+                    trajectory_point_msg.positions.size() * sizeof(double));
+
+                std::fill(trajectory_point_msg.velocities.begin(), trajectory_point_msg.velocities.end(), 0.0);
+
+                const double elapsed = static_cast<double>(point_index + 1) * sample_time;
+                trajectory_point_msg.time_from_start.sec = static_cast<int32_t>(elapsed);
+                trajectory_point_msg.time_from_start.nanosec = static_cast<uint32_t>(
+                    (elapsed - static_cast<double>(trajectory_point_msg.time_from_start.sec)) * 1e9);
+
+                trajectory_msg.points.push_back(trajectory_point_msg);
+                joint_positions = next_joint_positions;
+                point_index++;
             }
 
-            std::memcpy(
-                trajectory_point_msg.positions.data(), next_joint_positions.data.data(),
-                trajectory_point_msg.positions.size() * sizeof(double));
-
-            std::fill(trajectory_point_msg.velocities.begin(), trajectory_point_msg.velocities.end(), 0.0);
-
-            const double elapsed = static_cast<double>(point_index + 1) * sample_time;
-            trajectory_point_msg.time_from_start.sec = static_cast<int32_t>(elapsed);
-            trajectory_point_msg.time_from_start.nanosec = static_cast<uint32_t>(
-                (elapsed - static_cast<double>(trajectory_point_msg.time_from_start.sec)) * 1e9);
-
-            trajectory_msg.points.push_back(trajectory_point_msg);
-            joint_positions = next_joint_positions;
-            point_index++;
         }
 
         if (trajectory_msg.points.empty())
