@@ -70,15 +70,15 @@ $$
 
 Posteriormente, se realizan sus conversiones a cuaternios mediante la función otorgada:
 
-$$
-q = \text{rot2Quat}(R)
-$$
+```cpp
+tf2::Quaternion qA = rot2Quat(R0);
+```
 
-Además, se calcula el cuaternio inverso de la orientación inicial mediante otra función proporcionada:
+Además, se calcula el cuaternio inverso de la orientación inicial mediante la otra función proporcionada:
 
-$$
-q_A^{-1} = \text{InverseQuaternion}(q_A)
-$$
+```cpp
+tf2::Quaternion qA_inv = InverseQuaternion(qA);
+```
 
 Con el objetivo de obtener la rotación necesaria para transicionar entre la orientación inicial y la final, se calcula el cuaternio relativo:
 
@@ -224,13 +224,13 @@ El manipulador realiza la siguiente secuencia:
 Se procede a cambiar los siguientes parámetros para estudiar su influencia en el robot:
 
 #### τ = 1 ; T = 10
-![Plot τ=1 T=10](images/data_20260505_171605.png)
+![Plot τ=1 T=10](images/tau1t10.png)
 
 #### τ = 10 ; T = 10
-![Plot τ=10 T=10](images/data_20260505_172846.png)
+![Plot τ=10 T=10](images/tau10t10.png)
 
 #### τ = 10 ; T = 100
-![Plot τ=10 T=100](images/data_20260505_175915.png)
+![Plot τ=10 T=100](images/tau10t100.png)
 
 archivos con los plots con los datos
 data_20260505_171605.csv -> tau = 1 ; T = 10
