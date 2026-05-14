@@ -219,7 +219,7 @@ $$
 
 El manipulador realiza la siguiente secuencia:
 
-![Demostración](images/video.gif)
+![Demostración](images/tarea2.gif)
 
 Se procede a cambiar los siguientes parámetros para estudiar su influencia en el robot:
 
