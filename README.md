@@ -223,19 +223,26 @@ El manipulador realiza la siguiente secuencia:
 
 Se procede a cambiar los siguientes parámetros para estudiar su influencia en el robot:
 
-#### τ = 1 ; T = 10
-![Plot τ=1 T=10](images/tau1t10.png)
+#### Posición con τ = 1 ; T = 10
+![Pos. τ=1 T=10](images/tau1t10_pos.png)
 
-#### τ = 10 ; T = 10
-![Plot τ=10 T=10](images/tau10t10.png)
+#### Orientación con τ = 1 ; T = 10
+![Or. τ=1 T=10](images/tau1t10_or.png)
 
-#### τ = 10 ; T = 100
-![Plot τ=10 T=100](images/tau10t100.png)
+#### Posición con τ = 10 ; T = 10
+![Pos. τ=10 T=10](images/tau10t10_pos.png)
 
-archivos con los plots con los datos
-data_20260505_171605.csv -> tau = 1 ; T = 10
-data_20260505_172846.csv -> tau = 10; T = 10
-data_20260505_175915.csv -> tau = 10; T = 100
+#### Orientación con τ = 10 ; T = 10
+![Or. τ=10 T=10](images/tau10t10_or.png)
+
+#### Posición con τ = 10 ; T = 100
+![Pos. τ=10 T=100](images/tau10t100_or.png)
+
+#### Orientación con τ = 10 ; T = 100
+![Or. τ=10 T=100](images/tau10t100_or.png)
+
+
+
 
 #### Conclusiones:
 
