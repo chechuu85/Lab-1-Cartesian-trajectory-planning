@@ -141,7 +141,7 @@ std::pair<tf2::Vector3, tf2::Quaternion> PoseInterpolation(
     double lambda)
 {
 
-    // Cálculo de la pose:
+    // Cálculo de la posición:
 
     // Extraer posiciones
     Eigen::Vector3d p0 = start_pose.block<3,1>(0,3);
@@ -366,7 +366,7 @@ int main(int argc, char **argv)
 
     // Exercise 2 : Cartesian trajectory generation
     int tau = 1; //original 1
-    int T = 100;  //original 10
+    int T = 10;  //TIEMPO TOTAL DE MOVIMIENTO, original 10
     bool exercise_2 = true; // Set to true to execute Exercise 2
 
     if (exercise_2)
