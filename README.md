@@ -118,7 +118,7 @@ $$
 
 Al implementarse el algoritmo previamente descrito, se reciben los siguientes datos, coincidiendo con los esperados:
 
-FOTO*+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+![Resultado de la tarea 1.](images/tarea1.png)
 
 Se trata de la comprobación de la función, devolviendo las tres poses originales. Se observa en la solución que la pose 1 coincide con la número 2. Esto es debido a que se han interpolado dos procesos:
 
@@ -142,7 +142,7 @@ const auto [p3, q3] = PoseInterpolation(pose1, pose2, 1.0);
 
 Una trayectoria suave (entre dos puntos) es un tipo de trayectoria en la que el movimiento cambia de forma continua, evitando saltos bruscos en posición, velocidad u orientación, apoyándose en un punto intermedio. Para ello, se divide la trayectoria en tres tramos:
 
-FOTO++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+![Resultado de la tarea 1.](images/teoria.png)
 
 - $t < -\tau$ : Primer tramo lineal entre $pose_0$ y $pose_1$. Se realiza la interpolación de poses con $\lambda = (t + T)/T$.
 
@@ -217,17 +217,34 @@ $$
 
 ### Resultados
 
+El manipulador realiza la siguiente secuencia:
+
+![Demostración](images/video.gif)
+
+Se procede a cambiar los siguientes parámetros para estudiar su influencia en el robot:
+
+#### τ = 1 ; T = 10
+![Plot τ=1 T=10](images/data_20260505_171605.png)
+
+#### τ = 10 ; T = 10
+![Plot τ=10 T=10](images/data_20260505_172846.png)
+
+#### τ = 10 ; T = 100
+![Plot τ=10 T=100](images/data_20260505_175915.png)
+
 archivos con los plots con los datos
 data_20260505_171605.csv -> tau = 1 ; T = 10
 data_20260505_172846.csv -> tau = 10; T = 10
 data_20260505_175915.csv -> tau = 10; T = 100
 
-What happens when you change the value of τ? (se ve resultado comparando las gráficas) 
-al aumentar tau, el paso por el punto es más suave pero pasa más lejos del punto. ya que tau es el momento en el cual comienza y finaliza de "el arco". (No sé como explicarlo mejor)
+#### Conclusiones:
 
-What happens when you change the value of T? La velocidad del robot cambia ya que T es el tiempo que debe tardar el robot en completar un camino
+ - Al aumentar el valor del parámetro $\tau$, el paso por el punto es más suave pero el movimiento se aleja más del mismo. Esto ocurre porque $\tau$ define el intervalo temporal en el que se realiza la transición suave entre dos trayectorias, generando un “arco” de unión. Al aumentar $\tau$, este arco es más amplio, lo que mejora la continuidad del movimiento pero reduce la precisión en el paso por el punto.
+ - Por otra parte, al modificar $T$, la velocidad del robot es alterada, ya que T es el tiempo que debe tardar en completar la trayectoria. A menor $T$, actuará a mayor velocidad con el fin de llegar a tiempo a su objetivo, velocidad y periodo son inversamente proporcionales. 
 
-Can you change the velovity of the robot? How? Si, cambiando T
+
+
+
 
 
 
