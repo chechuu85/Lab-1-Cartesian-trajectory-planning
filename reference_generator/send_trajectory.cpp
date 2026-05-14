@@ -141,7 +141,7 @@ std::pair<tf2::Vector3, tf2::Quaternion> PoseInterpolation(
     double lambda)
 {
 
-    // Cálculo de la pose:
+    // Cálculo de la posición:
 
     // Extraer posiciones
     Eigen::Vector3d p0 = start_pose.block<3,1>(0,3);
