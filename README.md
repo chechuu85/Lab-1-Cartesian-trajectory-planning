@@ -59,9 +59,7 @@ T_0(0,0) & T_0(0,1) & T_0(0,2) \\
 T_0(1,0) & T_0(1,1) & T_0(1,2) \\
 T_0(2,0) & T_0(2,1) & T_0(2,2)
 \end{bmatrix}
-$$
-
-$$
+,\quad
 R_1 =
 \begin{bmatrix}
 T_1(0,0) & T_1(0,1) & T_1(0,2) \\
@@ -92,9 +90,7 @@ El ejercicio continua expresando el cuaternio relativo en formato eje-ángulo, �
 
 $$
 \theta = 2 \arccos(w)
-$$
-
-$$
+,\quad
 n_c = \frac{v}{\sin(\theta/2)}
 $$
 
@@ -108,9 +104,7 @@ A partir de este ángulo se genera un cuaternio parcial, que representa una "par
 
 $$
 w_{rot} = \cos\left(\frac{\theta_\lambda}{2}\right)
-$$
-
-$$
+,\quad
 v_{rot} = n_c \sin\left(\frac{\theta_\lambda}{2}\right)
 $$
 
@@ -165,9 +159,7 @@ Posteriormente, se calculan los ángulos parciales de la rotación, los cuales, 
 $$
 \theta_{k1} =
 -\frac{(\tau-t)^2}{4\tau T}\theta_{01}
-$$
-
-$$
+,\quad
 \theta_{k2} =
 \frac{(\tau+t)^2}{4\tau T}\theta_{12}
 $$
@@ -176,13 +168,9 @@ El siguiente paso es calcular el cuaternio asociado al primer tramo del suavizad
 
 $$
 w_{k1} = \cos\left(\frac{\theta_{k1}}{2}\right)
-$$
-
-$$
+,\quad
 v_{k1} = n_{01}\sin\left(\frac{\theta_{k1}}{2}\right)
-$$
-
-$$
+,\quad
 q_{k1} =
 \begin{bmatrix}
 v_{k1} \\
@@ -194,13 +182,9 @@ Por otra parte, se repite el proceso para la segunda mitad del suavizado, la tra
 
 $$
 w_{k2} = \cos\left(\frac{\theta_{k2}}{2}\right)
-$$
-
-$$
+,\quad
 v_{k2} = n_{12}\sin\left(\frac{\theta_{k2}}{2}\right)
-$$
-
-$$
+,\quad
 q_{k2} =
 \begin{bmatrix}
 v_{k2} \\
@@ -218,9 +202,7 @@ El cálculo de la posición se realiza calculando los vectores de desplazamiento
 
 $$
 \Delta P_{01}=P_1-P_0
-$$
-
-$$
+,\quad
 \Delta P_{12}=P_2-P_1
 $$
 
