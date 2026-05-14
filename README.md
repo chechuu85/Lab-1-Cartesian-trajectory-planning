@@ -260,4 +260,4 @@ Se procede a cambiar los siguientes parámetros para estudiar su influencia en e
 #### Conclusiones:
 
  - Al aumentar el valor del parámetro $\tau$, el paso por el punto es más suave pero el movimiento se aleja más del mismo. Esto ocurre porque $\tau$ define el intervalo temporal en el que se realiza la transición suave entre dos trayectorias, generando un “arco” de unión. Al aumentar $\tau$, este arco es más amplio, lo que mejora la continuidad del movimiento pero reduce la precisión en el paso por el punto.
- - Por otra parte, al modificar $T$, la velocidad del robot es alterada, ya que T es el tiempo que debe tardar en completar la trayectoria. A menor $T$, actuará a mayor velocidad con el fin de llegar a tiempo a su objetivo, velocidad y periodo son inversamente proporcionales.
+ - Por otra parte, al modificar $T$, la velocidad del robot es alterada, ya que es el tiempo que debe tardar en completar la trayectoria. A menor $T$, actuará a mayor velocidad con el fin de llegar a tiempo a su objetivo, velocidad y periodo son inversamente proporcionales.
